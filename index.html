@@ -195,8 +195,8 @@ tbody tr:hover td{background:var(--bg)}
 </head>
 <body>
 
-<!-- Setup Screen -->
-<div class="setup-wrap" id="setup-screen">
+<!-- Setup Screen (숨김 - 저장소 정보 고정됨) -->
+<div class="setup-wrap" id="setup-screen" style="display:none">
   <div class="setup-box">
     <div class="setup-logo">
       <h1>국내외 인증 현황</h1>
@@ -1032,16 +1032,13 @@ function toast(msg, type = 'ok') {
 }
 
 // ── Init ─────────────────────────────────────────────────
+// 저장소 정보 고정 (URL 접속 시 바로 대시보드 열림)
+CFG = { owner: 'suyeon-baek', repo: 'cert-dashboard' };
 loadCfg();
 document.getElementById('sb-role').textContent = '조회자';
 document.getElementById('sb-role').className = 'sb-foot-role role-viewer';
-
-if (CFG.owner && CFG.repo) {
-  document.getElementById('app').style.display = 'block';
-  startApp();
-} else {
-  document.getElementById('setup-screen').style.display = 'flex';
-}
+document.getElementById('app').style.display = 'block';
+startApp();
 
 // Re-check admin token from session
 if (adminToken) {
