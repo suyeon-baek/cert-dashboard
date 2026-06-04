@@ -207,9 +207,6 @@ tbody tr:hover td{background:var(--bg)}
         <i class="ti ti-bell-ringing"></i><span>만료 알림</span>
         <span class="nav-badge red" id="nb-alert">—</span>
       </div>
-      <div class="nav-item" onclick="goPage('timeline')">
-        <i class="ti ti-calendar-event"></i><span>갱신 일정</span>
-      </div>
       <div class="nav-section">국가별</div>
       <div class="nav-item" onclick="goPage('by-country')">
         <i class="ti ti-world"></i><span>국가별 현황</span>
@@ -300,21 +297,7 @@ tbody tr:hover td{background:var(--bg)}
       <div id="alert-page-list"></div>
     </div>
 
-    <!-- ④ 갱신 일정 -->
-    <div class="content page" id="page-timeline">
-      <div class="toolbar">
-        <select id="t-range" onchange="renderTimeline()">
-          <option value="90">3개월</option>
-          <option value="180">6개월</option>
-          <option value="365" selected>12개월</option>
-          <option value="730">24개월</option>
-        </select>
-        <select id="t-country" onchange="renderTimeline()"><option value="">전체 국가</option></select>
-      </div>
-      <div id="timeline-container"></div>
-    </div>
-
-    <!-- ⑤ 국가별 현황 -->
+    <!-- ④ 국가별 현황 -->
     <div class="content page" id="page-by-country">
       <div class="ctabs" id="country-tabs"></div>
       <div class="tw">
@@ -349,44 +332,70 @@ tbody tr:hover td{background:var(--bg)}
     <div class="modal-body">
       <div class="form-grid">
         <div class="form-group full">
-          <label class="form-label">품목명 *</label>
-          <input type="text" id="f-device" placeholder="예: 치과용 X선 촬영장치">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">모델명 *</label>
-          <input type="text" id="f-model" placeholder="예: RCT800">
+          <label class="form-label">품목명 <span style="color:var(--danger)">*</span></label>
+          <input type="text" id="f-device" placeholder="품목명 입력">
         </div>
         <div class="form-group">
-          <label class="form-label">국가 *</label>
-          <input type="text" id="f-country" placeholder="예: 미국">
+          <label class="form-label">모델명</label>
+          <input type="text" id="f-model">
         </div>
         <div class="form-group">
-          <label class="form-label">유형/분류</label>
-          <input type="text" id="f-classification" placeholder="예: FDA 510(k)">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">허가번호</label>
-          <input type="text" id="f-cert" placeholder="예: K122981">
+          <label class="form-label">인증 유형</label>
+          <select id="f-classification">
+            <option value="">선택</option>
+            <option value="국내식약처">국내식약처</option>
+            <option value="FDA 510(k)">FDA 510(k)</option>
+            <option value="CE 마킹">CE 마킹</option>
+            <option value="일본 후생성">일본 후생성</option>
+            <option value="NMPA">NMPA</option>
+            <option value="TGA">TGA</option>
+            <option value="Health Canada">Health Canada</option>
+            <option value="대만 TFDA">대만 TFDA</option>
+            <option value="기타">기타</option>
+          </select>
         </div>
         <div class="form-group">
-          <label class="form-label">허가일자</label>
+          <label class="form-label">국가</label>
+          <input type="text" id="f-country">
+        </div>
+        <div class="form-group">
+          <label class="form-label">인증번호</label>
+          <input type="text" id="f-cert">
+        </div>
+        <div class="form-group">
+          <label class="form-label">등급</label>
+          <input type="text" id="f-grade">
+        </div>
+        <div class="form-group">
+          <label class="form-label">인증일자</label>
           <input type="date" id="f-issue">
         </div>
         <div class="form-group">
-          <label class="form-label">만료일자</label>
+          <label class="form-label">만료일</label>
           <input type="date" id="f-expiry">
+        </div>
+        <div class="form-group">
+          <label class="form-label">담당자</label>
+          <input type="text" id="f-person">
         </div>
         <div class="form-group">
           <label class="form-label">상태</label>
           <select id="f-status">
-            <option value="">-</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
+            <option value="유효">유효</option>
+            <option value="갱신중">갱신 중</option>
+            <option value="만료임박">만료 임박</option>
+            <option value="만료">만료</option>
+            <option value="취하">취하</option>
           </select>
         </div>
         <div class="form-group full">
-          <label class="form-label">비고</label>
-          <textarea id="f-notes" placeholder="기타 메모"></textarea>
+          <label class="form-label">메모</label>
+          <input type="text" id="f-notes">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">변경이력 <span style="font-weight:400;color:var(--text-hint)">(변경 횟수: <span id="f-history-count">0</span>회)</span></label>
+          <div id="f-history-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px"></div>
+          <button type="button" class="btn btn-o" style="font-size:12px;padding:5px 12px" onclick="addHistoryRow()"><i class="ti ti-plus"></i> 변경이력 추가</button>
         </div>
       </div>
     </div>
@@ -737,39 +746,6 @@ function renderAlertPage() {
   }).join('');
 }
 
-// ── 갱신 일정 페이지 ──────────────────────────────────────
-function renderTimeline() {
-  const range = parseInt(document.getElementById('t-range')?.value) || 365;
-  const tc = document.getElementById('t-country')?.value || '';
-  const items = DATA.certifications.filter(r => {
-    const d = calcDays(r.expiry_date);
-    return d !== null && d >= -30 && d <= range && (!tc || r.country === tc);
-  }).sort((a, b) => calcDays(a.expiry_date) - calcDays(b.expiry_date));
-
-  const el = document.getElementById('timeline-container');
-  if (!items.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-hint)">해당 기간 내 갱신 예정 없음</div>'; return; }
-
-  const bdmap = {d:'bd',w:'bw',i:'bi',ok:'bs'};
-  let html = '', lastM = '';
-  items.forEach(r => {
-    const dt = new Date(r.expiry_date);
-    const m = dt.getFullYear() + '년 ' + (dt.getMonth() + 1) + '월';
-    if (m !== lastM) { html += `<div class="month-h">${m}</div>`; lastM = m; }
-    const d = calcDays(r.expiry_date);
-    const cls = urgCls(d);
-    const dlbl = d < 0 ? '만료됨' : d === 0 ? 'D-Day' : 'D-' + d;
-    html += `<div class="tl-item">
-      <div class="tl-dot ${cls}"></div>
-      <div class="tl-b">
-        <div class="tl-name">[${r.country}] ${r.device_name || r.model_name}${r.model_name && r.device_name ? ' ('+r.model_name+')' : ''}</div>
-        <div class="tl-meta">${r.classification||''} · 허가번호: ${r.cert_number||'—'} · 만료: ${fmtDate(r.expiry_date)}</div>
-      </div>
-      <span class="badge ${bdmap[cls]||'bs'}">${dlbl}</span>
-    </div>`;
-  });
-  el.innerHTML = html;
-}
-
 // ── 국가별 현황 ───────────────────────────────────────────
 function buildCountryTabs() {
   const countries = [...new Set(DATA.certifications.map(r => r.country).filter(Boolean))].sort();
@@ -825,15 +801,13 @@ function goPage(name) {
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name)?.classList.add('active');
   currentPage = name;
-  const titles = {dashboard:'대시보드', all:'전체 목록', alerts:'만료 알림', timeline:'갱신 일정', 'by-country':'국가별 현황'};
+  const titles = {dashboard:'대시보드', all:'전체 목록', alerts:'만료 알림', 'by-country':'국가별 현황'};
   document.getElementById('topbar-title').textContent = titles[name] || name;
-  // activate matching nav item
   document.querySelectorAll('.nav-item').forEach(n => {
     if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+name+"'")) n.classList.add('active');
   });
   if (name === 'all') renderTable();
   if (name === 'alerts') renderAlertPage();
-  if (name === 'timeline') renderTimeline();
   if (name === 'by-country') { buildCountryTabs(); renderCountryTable(); }
   if (name === 'dashboard') { renderMetrics(); renderDashAlerts(); }
 }
@@ -879,6 +853,39 @@ function adminLogout() {
 }
 
 // ── CRUD ──────────────────────────────────────────────────
+// ── 변경이력 ──────────────────────────────────────────────
+function addHistoryRow(date, content) {
+  const list = document.getElementById('f-history-list');
+  const row = document.createElement('div');
+  row.style.cssText = 'display:flex;gap:6px;align-items:center';
+  row.innerHTML = '<input type="date" style="width:140px;font-size:12px;padding:5px 8px" value="'+(date||'')+'">' +
+    '<input type="text" style="flex:1;font-size:12px;padding:5px 8px" placeholder="변경 내용 입력 (예: 모델 추가, 명칭 변경 등)" value="'+(content||'')+'">' +
+    '<button type="button" class="btn-icon del" style="padding:4px 7px;flex-shrink:0" onclick="this.parentElement.remove();updateHistoryCount()"><i class="ti ti-trash"></i></button>';
+  list.appendChild(row);
+  updateHistoryCount();
+}
+
+function updateHistoryCount() {
+  document.getElementById('f-history-count').textContent = document.getElementById('f-history-list').children.length;
+}
+
+function getHistoryFromForm() {
+  const rows = document.getElementById('f-history-list').children;
+  const result = [];
+  for (let i = 0; i < rows.length; i++) {
+    const inputs = rows[i].querySelectorAll('input');
+    const d = inputs[0].value, c = inputs[1].value.trim();
+    if (d || c) result.push({date: d, content: c});
+  }
+  return result;
+}
+
+function setHistoryToForm(history) {
+  document.getElementById('f-history-list').innerHTML = '';
+  (history || []).forEach(h => addHistoryRow(h.date, h.content));
+  updateHistoryCount();
+}
+
 function openAdd() {
   editingId = null;
   document.getElementById('modal-title').textContent = '인증 추가';
@@ -896,36 +903,43 @@ function openEdit(id) {
   document.getElementById('f-country').value = r.country || '';
   document.getElementById('f-classification').value = r.classification || '';
   document.getElementById('f-cert').value = r.cert_number || '';
+  document.getElementById('f-grade').value = r.grade || '';
   document.getElementById('f-issue').value = r.issue_date || '';
   document.getElementById('f-expiry').value = r.expiry_date || '';
-  document.getElementById('f-status').value = r.status || '';
+  document.getElementById('f-person').value = r.person || '';
+  document.getElementById('f-status').value = r.status || '유효';
   document.getElementById('f-notes').value = r.notes || '';
+  setHistoryToForm(r.change_history || []);
   document.getElementById('modal-edit').classList.add('show');
 }
 
 function clearForm() {
-  ['f-device','f-model','f-country','f-classification','f-cert','f-issue','f-expiry','f-notes'].forEach(id => {
+  ['f-device','f-model','f-country','f-cert','f-grade','f-issue','f-expiry','f-person','f-notes'].forEach(id => {
     document.getElementById(id).value = '';
   });
-  document.getElementById('f-status').value = '';
+  document.getElementById('f-classification').value = '';
+  document.getElementById('f-status').value = '유효';
+  setHistoryToForm([]);
 }
 
 async function saveRecord() {
-  const country = document.getElementById('f-country').value.trim();
-  const model = document.getElementById('f-model').value.trim();
-  if (!country || !model) { toast('국가와 모델명은 필수입니다', 'err'); return; }
+  const device = document.getElementById('f-device').value.trim();
+  if (!device) { toast('품목명은 필수입니다', 'err'); return; }
 
   const record = {
     id: editingId || crypto.randomUUID(),
-    country,
-    device_name: document.getElementById('f-device').value.trim(),
-    model_name: model,
+    country: document.getElementById('f-country').value.trim(),
+    device_name: device,
+    model_name: document.getElementById('f-model').value.trim(),
     cert_number: document.getElementById('f-cert').value.trim(),
+    grade: document.getElementById('f-grade').value.trim(),
     issue_date: document.getElementById('f-issue').value,
     expiry_date: document.getElementById('f-expiry').value,
-    classification: document.getElementById('f-classification').value.trim(),
+    classification: document.getElementById('f-classification').value,
+    person: document.getElementById('f-person').value.trim(),
     status: document.getElementById('f-status').value,
-    notes: document.getElementById('f-notes').value.trim()
+    notes: document.getElementById('f-notes').value.trim(),
+    change_history: getHistoryFromForm()
   };
 
   if (editingId) {
@@ -998,7 +1012,6 @@ function renderAll() {
   renderDashAlerts();
   if (currentPage === 'all') renderTable();
   if (currentPage === 'alerts') renderAlertPage();
-  if (currentPage === 'timeline') renderTimeline();
   if (currentPage === 'by-country') { buildCountryTabs(); renderCountryTable(); }
   const ud = DATA.last_updated || '—';
   document.getElementById('sb-updated').textContent = '업데이트: ' + ud;
