@@ -22,22 +22,6 @@
 }
 body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6;min-height:100vh}
 
-/* ── Setup Screen ── */
-.setup-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--accent)}
-.setup-box{background:var(--surface);border-radius:16px;padding:40px;width:420px;max-width:90vw;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
-.setup-logo{text-align:center;margin-bottom:28px}
-.setup-logo h1{font-size:20px;font-weight:600;color:var(--accent);margin-bottom:4px}
-.setup-logo p{font-size:13px;color:var(--text-muted)}
-.setup-form{display:flex;flex-direction:column;gap:14px}
-.field-label{font-size:12px;font-weight:600;color:var(--text-muted);display:block;margin-bottom:4px}
-.field-hint{font-size:11px;color:var(--text-hint);margin-top:3px}
-.field-input{width:100%;border:1px solid var(--border-md);border-radius:var(--rs);padding:10px 12px;font-size:14px;font-family:'Noto Sans KR',sans-serif;outline:none;transition:border-color .15s}
-.field-input:focus{border-color:var(--accent)}
-.setup-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--rs);padding:12px;font-size:14px;font-weight:600;font-family:'Noto Sans KR',sans-serif;cursor:pointer;transition:background .15s}
-.setup-btn:hover{background:#154030}
-.setup-err{font-size:12px;color:var(--danger);background:var(--danger-bg);padding:8px 12px;border-radius:var(--rs);display:none}
-.setup-err.show{display:block}
-
 /* ── Layout ── */
 .app-wrap{display:none}
 .sb{position:fixed;top:0;left:0;bottom:0;width:220px;background:var(--accent);display:flex;flex-direction:column;z-index:50;overflow:hidden}
@@ -80,7 +64,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text
 .mc-val{font-size:26px;font-weight:600;font-family:'DM Mono',monospace}
 .mc-sub{font-size:11px;color:var(--text-hint);margin-top:3px}
 
-/* ── Alerts ── */
+/* ── Alerts (dashboard) ── */
 .sec-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .sec-title{font-size:13px;font-weight:600}
 .sec-hint{font-size:11px;color:var(--text-hint)}
@@ -125,8 +109,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 table{width:100%;border-collapse:collapse}
 thead th{padding:9px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;background:var(--surface2);border-bottom:1px solid var(--border);text-align:left;white-space:nowrap;cursor:pointer;user-select:none}
 thead th:hover{color:var(--text)}
-thead th .sort-icon{margin-left:4px;opacity:0.4}
-thead th.sort-asc .sort-icon,thead th.sort-desc .sort-icon{opacity:1;color:var(--accent)}
 tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:var(--bg)}
@@ -143,6 +125,14 @@ tbody tr:hover td{background:var(--bg)}
 .ctab{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border-md);background:var(--surface);color:var(--text-muted);transition:all .15s;white-space:nowrap}
 .ctab:hover{background:var(--surface2)}
 .ctab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ── Timeline ── */
+.month-h{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;padding:6px 0;border-bottom:1px solid var(--border);margin:18px 0 8px}
+.month-h:first-child{margin-top:0}
+.tl-item{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:7px;box-shadow:var(--shadow)}
+.tl-dot{width:9px;height:9px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.tl-dot.d{background:var(--danger)}.tl-dot.w{background:var(--warning)}.tl-dot.i{background:var(--info)}.tl-dot.ok{background:var(--success)}
+.tl-b{flex:1}.tl-name{font-size:13px;font-weight:500}.tl-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
 
 /* ── Pagination ── */
 .pager{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border)}
@@ -191,32 +181,10 @@ tbody tr:hover td{background:var(--bg)}
 .toast-err{background:var(--danger-bg);color:var(--danger);border:1px solid rgba(192,57,43,0.2)}
 .toast-info{background:var(--info-bg);color:var(--info);border:1px solid rgba(26,95,158,0.2)}
 @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:var(--border-md);border-radius:3px}
 </style>
 </head>
 <body>
-
-<!-- Setup Screen (숨김 - 저장소 정보 고정됨) -->
-<div class="setup-wrap" id="setup-screen" style="display:none">
-  <div class="setup-box">
-    <div class="setup-logo">
-      <h1>국내외 인증 현황</h1>
-      <p>GitHub 저장소 정보를 입력하세요</p>
-    </div>
-    <div class="setup-form">
-      <div>
-        <label class="field-label">GitHub 사용자명 또는 조직명</label>
-        <input class="field-input" id="cfg-owner" type="text" placeholder="예: raymedical">
-      </div>
-      <div>
-        <label class="field-label">저장소 이름</label>
-        <input class="field-input" id="cfg-repo" type="text" placeholder="예: cert-dashboard">
-        <p class="field-hint">GitHub에서 생성한 저장소 이름 (영문)</p>
-      </div>
-      <div class="setup-err" id="setup-err"></div>
-      <button class="setup-btn" onclick="doSetup()">연결하기</button>
-    </div>
-  </div>
-</div>
 
 <!-- Main App -->
 <div class="app-wrap" id="app">
@@ -227,26 +195,30 @@ tbody tr:hover td{background:var(--bg)}
       <p id="sb-updated">—</p>
     </div>
     <nav class="nav">
-      <div class="nav-section">메인</div>
+      <div class="nav-section">메뉴</div>
       <div class="nav-item active" onclick="goPage('dashboard')">
-        <i class="ti ti-dashboard"></i>대시보드
+        <i class="ti ti-layout-dashboard"></i><span>대시보드</span>
       </div>
       <div class="nav-item" onclick="goPage('all')">
-        <i class="ti ti-list"></i>전체 인증 목록
+        <i class="ti ti-list-details"></i><span>전체 목록</span>
         <span class="nav-badge" id="nb-total">—</span>
       </div>
-      <div class="nav-section">알림</div>
       <div class="nav-item" onclick="goPage('alerts')">
-        <i class="ti ti-alert-triangle"></i>만료 알림
+        <i class="ti ti-bell-ringing"></i><span>만료 알림</span>
         <span class="nav-badge red" id="nb-alert">—</span>
       </div>
+      <div class="nav-item" onclick="goPage('timeline')">
+        <i class="ti ti-calendar-event"></i><span>갱신 일정</span>
+      </div>
       <div class="nav-section">국가별</div>
-      <div id="nav-countries"></div>
+      <div class="nav-item" onclick="goPage('by-country')">
+        <i class="ti ti-world"></i><span>국가별 현황</span>
+      </div>
     </nav>
     <div class="sb-foot">
       <div class="sb-foot-role" id="sb-role"></div>
       <div class="sb-foot-user" id="sb-user"></div>
-      <button class="logout-btn" onclick="changeSettings()">⚙ 설정 변경</button>
+      <button class="logout-btn" onclick="showTokenModal()">⚙ 설정 / 편집 모드</button>
     </div>
   </div>
 
@@ -257,16 +229,17 @@ tbody tr:hover td{background:var(--bg)}
       <div class="topbar-right">
         <span class="today-lbl" id="today-lbl"></span>
         <span class="sync-badge sync-loading" id="sync-badge">로딩중...</span>
-        <button class="btn btn-o btn-sm" id="btn-admin-login" onclick="showTokenModal()">
-          <i class="ti ti-lock"></i>편집 모드
-        </button>
         <button class="btn btn-o btn-sm" id="btn-admin-logout" style="display:none" onclick="adminLogout()">
           <i class="ti ti-lock-open"></i>편집 종료
+        </button>
+        <button class="btn btn-o btn-sm" onclick="exportCSV()"><i class="ti ti-download"></i> CSV</button>
+        <button class="btn btn-p btn-sm" id="btn-add" onclick="openAdd()" style="display:none">
+          <i class="ti ti-plus"></i> 추가
         </button>
       </div>
     </div>
 
-    <!-- Dashboard Page -->
+    <!-- ① 대시보드 -->
     <div class="content page active" id="page-dashboard">
       <div class="metric-grid" id="metrics"></div>
       <div class="sec-hd">
@@ -276,64 +249,87 @@ tbody tr:hover td{background:var(--bg)}
       <div class="alert-list" id="alert-list-dash"></div>
     </div>
 
-    <!-- All Certifications Page -->
+    <!-- ② 전체 목록 -->
     <div class="content page" id="page-all">
       <div class="toolbar">
-        <div class="sw"><i class="ti ti-search"></i><input type="text" id="search-all" placeholder="제품명, 모델명, 허가번호 검색..." oninput="renderTable()"></div>
-        <select id="filter-country" onchange="renderTable()"><option value="">전체 국가</option></select>
-        <select id="filter-status" onchange="renderTable()">
+        <div class="sw"><i class="ti ti-search"></i><input type="text" id="s-q" placeholder="품목명·모델명·허가번호 검색..." oninput="listPage=1;renderTable()"></div>
+        <select id="s-country" onchange="listPage=1;renderTable()"><option value="">전체 국가</option></select>
+        <select id="s-class" onchange="listPage=1;renderTable()"><option value="">전체 유형</option></select>
+        <select id="s-status" onchange="listPage=1;renderTable()">
           <option value="">전체 상태</option>
           <option value="active">유효</option>
           <option value="expiring">만료 임박</option>
           <option value="expired">만료</option>
-          <option value="permanent">영구</option>
+          <option value="permanent">영구/취하</option>
         </select>
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <button class="btn btn-p" id="btn-add" onclick="openAdd()" style="display:none"><i class="ti ti-plus"></i>추가</button>
-          <button class="btn btn-o btn-sm" onclick="exportCSV()"><i class="ti ti-download"></i>CSV 내보내기</button>
-        </div>
       </div>
       <div class="tw">
         <table>
           <thead>
             <tr>
-              <th onclick="sortTable('country')">국가 <span class="sort-icon ti ti-arrows-sort"></span></th>
-              <th onclick="sortTable('device_name')">품목 <span class="sort-icon ti ti-arrows-sort"></span></th>
-              <th onclick="sortTable('model_name')">모델명 <span class="sort-icon ti ti-arrows-sort"></span></th>
-              <th onclick="sortTable('cert_number')">허가번호 <span class="sort-icon ti ti-arrows-sort"></span></th>
-              <th onclick="sortTable('classification')">분류 <span class="sort-icon ti ti-arrows-sort"></span></th>
-              <th onclick="sortTable('issue_date')">허가일 <span class="sort-icon ti ti-arrows-sort"></span></th>
-              <th onclick="sortTable('expiry_date')">만료일 <span class="sort-icon ti ti-arrows-sort"></span></th>
+              <th>품목명</th>
+              <th>모델명</th>
+              <th>유형</th>
+              <th>국가</th>
+              <th>허가번호</th>
+              <th>허가일</th>
+              <th>만료일</th>
+              <th>잔여일</th>
               <th>상태</th>
-              <th id="th-actions" style="display:none"></th>
+              <th id="th-act" style="display:none"></th>
             </tr>
           </thead>
-          <tbody id="cert-tbody"></tbody>
+          <tbody id="list-tbody"></tbody>
         </table>
-        <div class="pager" id="pager"></div>
+        <div class="pager" id="list-pager"></div>
       </div>
     </div>
 
-    <!-- Alerts Page -->
+    <!-- ③ 만료 알림 -->
     <div class="content page" id="page-alerts">
-      <div class="alert-list" id="alert-list-full"></div>
+      <div class="toolbar">
+        <select id="a-range" onchange="renderAlertPage()">
+          <option value="30">30일 이내</option>
+          <option value="60">60일 이내</option>
+          <option value="90" selected>90일 이내</option>
+          <option value="180">180일 이내</option>
+          <option value="365">365일 이내</option>
+        </select>
+        <select id="a-country" onchange="renderAlertPage()"><option value="">전체 국가</option></select>
+      </div>
+      <div id="alert-page-list"></div>
     </div>
 
-    <!-- Country Page -->
-    <div class="content page" id="page-country">
+    <!-- ④ 갱신 일정 -->
+    <div class="content page" id="page-timeline">
       <div class="toolbar">
-        <div class="sw"><i class="ti ti-search"></i><input type="text" id="search-country" placeholder="검색..." oninput="renderCountryTable()"></div>
-        <div style="margin-left:auto;display:flex;gap:8px">
-          <button class="btn btn-p" id="btn-add-country" onclick="openAdd()" style="display:none"><i class="ti ti-plus"></i>추가</button>
-        </div>
+        <select id="t-range" onchange="renderTimeline()">
+          <option value="90">3개월</option>
+          <option value="180">6개월</option>
+          <option value="365" selected>12개월</option>
+          <option value="730">24개월</option>
+        </select>
+        <select id="t-country" onchange="renderTimeline()"><option value="">전체 국가</option></select>
       </div>
+      <div id="timeline-container"></div>
+    </div>
+
+    <!-- ⑤ 국가별 현황 -->
+    <div class="content page" id="page-by-country">
+      <div class="ctabs" id="country-tabs"></div>
       <div class="tw">
         <table>
           <thead>
             <tr>
-              <th>품목</th><th>모델명</th><th>허가번호</th><th>분류</th>
-              <th>허가일</th><th>만료일</th><th>상태</th>
-              <th id="th-actions-c" style="display:none"></th>
+              <th>품목명</th>
+              <th>모델명</th>
+              <th>유형</th>
+              <th>허가번호</th>
+              <th>허가일</th>
+              <th>만료일</th>
+              <th>잔여일</th>
+              <th>상태</th>
+              <th id="th-act-c" style="display:none"></th>
             </tr>
           </thead>
           <tbody id="country-tbody"></tbody>
@@ -352,21 +348,21 @@ tbody tr:hover td{background:var(--bg)}
     </div>
     <div class="modal-body">
       <div class="form-grid">
+        <div class="form-group full">
+          <label class="form-label">품목명 *</label>
+          <input type="text" id="f-device" placeholder="예: 치과용 X선 촬영장치">
+        </div>
+        <div class="form-group full">
+          <label class="form-label">모델명 *</label>
+          <input type="text" id="f-model" placeholder="예: RCT800">
+        </div>
         <div class="form-group">
           <label class="form-label">국가 *</label>
           <input type="text" id="f-country" placeholder="예: 미국">
         </div>
         <div class="form-group">
-          <label class="form-label">분류</label>
-          <input type="text" id="f-classification" placeholder="예: Class II">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">품목명 *</label>
-          <input type="text" id="f-device" placeholder="예: Dental X-ray System">
-        </div>
-        <div class="form-group full">
-          <label class="form-label">모델명 *</label>
-          <input type="text" id="f-model" placeholder="예: RCT800">
+          <label class="form-label">유형/분류</label>
+          <input type="text" id="f-classification" placeholder="예: FDA 510(k)">
         </div>
         <div class="form-group full">
           <label class="form-label">허가번호</label>
@@ -413,7 +409,7 @@ tbody tr:hover td{background:var(--bg)}
     </ol>
     <div class="form-group" style="margin-bottom:14px">
       <label class="form-label">GitHub Token</label>
-      <input class="field-input" type="password" id="token-input" placeholder="github_pat_...">
+      <input class="field-input" style="width:100%;border:1px solid var(--border-md);border-radius:var(--rs);padding:10px 12px;font-size:13px;font-family:'Noto Sans KR',sans-serif;outline:none" type="password" id="token-input" placeholder="github_pat_...">
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn btn-o" onclick="closeModal('modal-token')">취소</button>
@@ -434,54 +430,24 @@ tbody tr:hover td{background:var(--bg)}
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast-wrap"></div>
 
 <script>
 // ── Config ──────────────────────────────────────────────
-let CFG = {};
+const CFG = { owner: 'suyeon-baek', repo: 'cert-dashboard' };
 let DATA = { certifications: [], last_updated: '' };
 let adminToken = null;
 let currentPage = 'dashboard';
-let currentCountry = '';
-let sortKey = '';
-let sortDir = 1;
-let pageNum = 1;
-const PAGE_SIZE = 50;
+let selCountry = '';
+let listPage = 1;
+const PAGE_SIZE = 30;
 let editingId = null;
 let deletingId = null;
 
-function loadCfg() {
-  const raw = localStorage.getItem('cert_cfg');
-  if (raw) CFG = JSON.parse(raw);
-  const token = sessionStorage.getItem('cert_token');
-  if (token) adminToken = token;
-}
+const sessionToken = sessionStorage.getItem('cert_token');
+if (sessionToken) adminToken = sessionToken;
 
-function saveCfg() {
-  localStorage.setItem('cert_cfg', JSON.stringify(CFG));
-}
-
-// ── Setup ────────────────────────────────────────────────
-function doSetup() {
-  const owner = document.getElementById('cfg-owner').value.trim();
-  const repo  = document.getElementById('cfg-repo').value.trim();
-  const err   = document.getElementById('setup-err');
-  if (!owner || !repo) { err.textContent = '모든 항목을 입력하세요.'; err.classList.add('show'); return; }
-  CFG = { owner, repo };
-  saveCfg();
-  err.classList.remove('show');
-  startApp();
-}
-
-function changeSettings() {
-  document.getElementById('cfg-owner').value = CFG.owner || '';
-  document.getElementById('cfg-repo').value  = CFG.repo  || '';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('setup-screen').style.display = 'flex';
-}
-
-// ── Data Fetching ────────────────────────────────────────
+// ── Data ─────────────────────────────────────────────────
 function rawUrl() {
   return `https://raw.githubusercontent.com/${CFG.owner}/${CFG.repo}/main/data.json?t=${Date.now()}`;
 }
@@ -495,12 +461,12 @@ async function fetchData() {
     setBadge('ok');
     return true;
   } catch(e) {
-    setBadge('err', e.message);
+    setBadge('err');
     return false;
   }
 }
 
-function setBadge(state, msg) {
+function setBadge(state) {
   const el = document.getElementById('sync-badge');
   el.className = 'sync-badge';
   if (state === 'ok') { el.classList.add('sync-ok'); el.textContent = '✓ 동기화됨'; }
@@ -508,45 +474,29 @@ function setBadge(state, msg) {
   else { el.classList.add('sync-loading'); el.textContent = '로딩중...'; }
 }
 
-// ── GitHub API Save ──────────────────────────────────────
+// ── GitHub Save ──────────────────────────────────────────
 async function saveToGitHub() {
   if (!adminToken) return false;
   try {
     DATA.last_updated = new Date().toISOString().split('T')[0];
     DATA.total = DATA.certifications.length;
     const content = JSON.stringify(DATA, null, 2);
-
-    // Get current sha
     const metaRes = await fetch(
       `https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/data.json`,
       { headers: { 'Authorization': `token ${adminToken}`, 'Accept': 'application/vnd.github.v3+json' } }
     );
     if (!metaRes.ok) throw new Error('파일 정보 조회 실패');
     const meta = await metaRes.json();
-
-    // Encode content
     const encoded = btoa(unescape(encodeURIComponent(content)));
-
     const putRes = await fetch(
       `https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/data.json`,
       {
         method: 'PUT',
-        headers: {
-          'Authorization': `token ${adminToken}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github.v3+json'
-        },
-        body: JSON.stringify({
-          message: `Update certifications - ${DATA.last_updated}`,
-          content: encoded,
-          sha: meta.sha
-        })
+        headers: { 'Authorization': `token ${adminToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
+        body: JSON.stringify({ message: `Update certifications - ${DATA.last_updated}`, content: encoded, sha: meta.sha })
       }
     );
-    if (!putRes.ok) {
-      const errData = await putRes.json();
-      throw new Error(errData.message || 'GitHub 저장 실패');
-    }
+    if (!putRes.ok) { const e = await putRes.json(); throw new Error(e.message || 'GitHub 저장 실패'); }
     return true;
   } catch(e) {
     toast('저장 실패: ' + e.message, 'err');
@@ -554,89 +504,76 @@ async function saveToGitHub() {
   }
 }
 
-// ── App Start ────────────────────────────────────────────
-async function startApp() {
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-
-  document.getElementById('today-lbl').textContent = new Date().toLocaleDateString('ko-KR');
-
-  const ok = await fetchData();
-  if (!ok) {
-    toast('데이터를 불러올 수 없습니다. 저장소 정보를 확인하세요.', 'err');
-  }
-  renderAll();
-}
-
-// ── Render All ───────────────────────────────────────────
-function renderAll() {
-  renderSidebar();
-  renderMetrics();
-  renderAlerts();
-  renderTable();
-  const ud = DATA.last_updated || '—';
-  document.getElementById('sb-updated').textContent = '업데이트: ' + ud;
-}
-
-// ── Sidebar ──────────────────────────────────────────────
-function renderSidebar() {
-  const countries = [...new Set(DATA.certifications.map(r => r.country))].sort();
-  const nb = document.getElementById('nb-total');
-  if (nb) nb.textContent = DATA.certifications.length;
-  const alertCount = DATA.certifications.filter(r => getStatus(r) === 'expired' || getStatus(r) === 'expiring').length;
-  const na = document.getElementById('nb-alert');
-  if (na) na.textContent = alertCount;
-
-  const container = document.getElementById('nav-countries');
-  container.innerHTML = countries.map(c => {
-    const cnt = DATA.certifications.filter(r => r.country === c).length;
-    return `<div class="nav-item" onclick="goCountry('${c}')" id="nav-c-${encodeURIComponent(c)}">
-      <i class="ti ti-flag"></i><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c}</span>
-      <span class="nav-badge">${cnt}</span>
-    </div>`;
-  }).join('');
-
-  const countrySelect = document.getElementById('filter-country');
-  if (countrySelect) {
-    countrySelect.innerHTML = '<option value="">전체 국가</option>' +
-      countries.map(c => `<option value="${c}">${c}</option>`).join('');
-  }
-}
-
-// ── Status ───────────────────────────────────────────────
+// ── Status / Days ────────────────────────────────────────
 function getStatus(r) {
   if (!r.expiry_date) return 'permanent';
-  const s = r.expiry_date.toLowerCase();
-  if (s === '평생' || s === '취하' || s === '영구' || s === '—') return 'permanent';
+  const s = String(r.expiry_date).toLowerCase();
+  if (['평생','취하','영구','—','-'].includes(s)) return 'permanent';
   const d = new Date(r.expiry_date);
   if (isNaN(d)) return 'permanent';
-  const now = new Date();
-  const diff = (d - now) / 86400000;
+  const diff = (d - new Date()) / 86400000;
   if (diff < 0) return 'expired';
   if (diff <= 90) return 'expiring';
   return 'active';
 }
 
-function statusBadge(r) {
-  const st = getStatus(r);
-  const activeLabel = r.status === 'Inactive' ? '비활성' : r.status === 'Active' ? '활성' : '';
-  if (st === 'expired') return `<span class="badge bd">만료</span>`;
-  if (st === 'expiring') return `<span class="badge bw">만료임박</span>`;
-  if (st === 'permanent') return `<span class="badge bg">영구/취하</span>`;
-  if (activeLabel === '비활성') return `<span class="badge bg">비활성</span>`;
-  return `<span class="badge bs">유효</span>`;
+function calcDays(expiry) {
+  if (!expiry) return null;
+  const s = String(expiry).toLowerCase();
+  if (['평생','취하','영구','—','-'].includes(s)) return null;
+  const d = new Date(expiry);
+  if (isNaN(d)) return null;
+  return Math.ceil((d - new Date()) / 86400000);
 }
 
-function daysLeft(expiry) {
-  if (!expiry) return '';
-  const s = expiry.toLowerCase();
-  if (s === '평생' || s === '취하' || s === '영구') return expiry;
-  const d = new Date(expiry);
-  if (isNaN(d)) return expiry;
-  const diff = Math.round((d - new Date()) / 86400000);
-  if (diff < 0) return `<span class="dr d">${expiry}<br><small>${Math.abs(diff)}일 초과</small></span>`;
-  if (diff <= 90) return `<span class="dr w">${expiry}<br><small>D-${diff}</small></span>`;
-  return `<span class="dr ok">${expiry}</span>`;
+function urgCls(d) {
+  if (d === null) return 'g';
+  if (d < 0) return 'd';
+  if (d <= 30) return 'd';
+  if (d <= 60) return 'w';
+  if (d <= 90) return 'i';
+  return 'ok';
+}
+
+function daysLabel(d) {
+  if (d === null) return '-';
+  if (d < 0) return '+' + Math.abs(d) + '일';
+  if (d === 0) return 'D-Day';
+  return 'D-' + d;
+}
+
+function statusBadge(r) {
+  const st = getStatus(r);
+  if (st === 'expired') return '<span class="badge bd">만료</span>';
+  if (st === 'expiring') return '<span class="badge bw">만료임박</span>';
+  if (st === 'permanent') return '<span class="badge bg">영구/취하</span>';
+  return '<span class="badge bs">유효</span>';
+}
+
+function fmtDate(d) { return d ? String(d).replace(/-/g, '.') : '-'; }
+
+// ── Filters ──────────────────────────────────────────────
+function buildFilters() {
+  const certs = DATA.certifications;
+  const countries = [...new Set(certs.map(r => r.country).filter(Boolean))].sort();
+  const classes = [...new Set(certs.map(r => r.classification).filter(Boolean))].sort();
+
+  ['s-country','a-country','t-country'].forEach(id => {
+    const el = document.getElementById(id); if (!el) return;
+    const cur = el.value;
+    el.innerHTML = '<option value="">전체 국가</option>' + countries.map(c => `<option value="${c}">${c}</option>`).join('');
+    el.value = cur;
+  });
+
+  const sc = document.getElementById('s-class');
+  if (sc) {
+    const cur = sc.value;
+    sc.innerHTML = '<option value="">전체 유형</option>' + classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    sc.value = cur;
+  }
+
+  const nb = document.getElementById('nb-total');
+  if (nb) nb.textContent = certs.length;
 }
 
 // ── Metrics ──────────────────────────────────────────────
@@ -663,8 +600,8 @@ function renderMetrics() {
     </div>`).join('');
 }
 
-// ── Alerts ───────────────────────────────────────────────
-function renderAlerts() {
+// ── Dashboard Alerts ─────────────────────────────────────
+function renderDashAlerts() {
   const alerts = DATA.certifications
     .filter(r => getStatus(r) === 'expired' || getStatus(r) === 'expiring')
     .sort((a, b) => new Date(a.expiry_date) - new Date(b.expiry_date));
@@ -672,191 +609,236 @@ function renderAlerts() {
   const nb = document.getElementById('nb-alert');
   if (nb) nb.textContent = alerts.length;
 
-  const html = alerts.length === 0
-    ? '<div style="text-align:center;padding:20px;color:var(--text-hint)">만료 예정 또는 만료된 인증이 없습니다 ✓</div>'
-    : alerts.map(r => {
-        const st = getStatus(r);
-        const lv = st === 'expired' ? 'lv-d' : 'lv-w';
-        const icon = st === 'expired' ? 'ti-circle-x' : 'ti-alert-triangle';
-        const d = new Date(r.expiry_date);
-        const diff = Math.round((d - new Date()) / 86400000);
-        const label = st === 'expired' ? `${Math.abs(diff)}일 경과` : `D-${diff}`;
-        return `<div class="alert-item ${lv}">
-          <i class="ti ${icon} ai-icon ${lv}"></i>
-          <div class="ai-body">
-            <div class="ai-name">[${r.country}] ${r.device_name || r.model_name}</div>
-            <div class="ai-meta">${r.model_name} · 허가번호: ${r.cert_number || '—'} · 만료일: ${r.expiry_date}</div>
-          </div>
-          <div class="ai-badge"><span class="badge ${st==='expired'?'bd':'bw'}">${label}</span></div>
-        </div>`;
-      }).join('');
-
-  const d1 = document.getElementById('alert-list-dash');
-  const d2 = document.getElementById('alert-list-full');
-  const limited = alerts.slice(0, 5);
-  if (d1) d1.innerHTML = limited.length === 0 ? html : limited.map(r => {
+  const el = document.getElementById('alert-list-dash');
+  if (!alerts.length) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-hint)">만료 예정 또는 만료된 인증이 없습니다 ✓</div>';
+    return;
+  }
+  const show = alerts.slice(0, 8);
+  el.innerHTML = show.map(r => {
     const st = getStatus(r);
     const lv = st === 'expired' ? 'lv-d' : 'lv-w';
     const icon = st === 'expired' ? 'ti-circle-x' : 'ti-alert-triangle';
-    const d = new Date(r.expiry_date);
-    const diff = Math.round((d - new Date()) / 86400000);
-    const label = st === 'expired' ? `${Math.abs(diff)}일 경과` : `D-${diff}`;
+    const d = calcDays(r.expiry_date);
+    const label = st === 'expired' ? Math.abs(d) + '일 경과' : 'D-' + d;
     return `<div class="alert-item ${lv}">
       <i class="ti ${icon} ai-icon ${lv}"></i>
       <div class="ai-body">
         <div class="ai-name">[${r.country}] ${r.device_name || r.model_name}</div>
-        <div class="ai-meta">${r.model_name} · ${r.cert_number || '—'} · ${r.expiry_date}</div>
+        <div class="ai-meta">${r.model_name}${r.classification ? ' · ' + r.classification : ''} · 허가번호: ${r.cert_number || '—'} · 만료일: ${r.expiry_date}</div>
       </div>
       <div class="ai-badge"><span class="badge ${st==='expired'?'bd':'bw'}">${label}</span></div>
     </div>`;
-  }).join('') + (alerts.length > 5 ? `<div style="text-align:center;padding:8px"><button class="btn btn-o btn-sm" onclick="goPage('alerts')">전체 ${alerts.length}건 보기</button></div>` : '');
-  if (d2) d2.innerHTML = html;
+  }).join('') + (alerts.length > 8 ? `<div style="text-align:center;padding:8px"><button class="btn btn-o btn-sm" onclick="goPage('alerts')">전체 ${alerts.length}건 보기 →</button></div>` : '');
 }
 
-// ── Table ────────────────────────────────────────────────
-function getFilteredData() {
-  const search = (document.getElementById('search-all')?.value || '').toLowerCase();
-  const country = document.getElementById('filter-country')?.value || '';
-  const statusF = document.getElementById('filter-status')?.value || '';
+// ── 전체 목록 ─────────────────────────────────────────────
+function renderTable() {
+  const q = (document.getElementById('s-q')?.value || '').toLowerCase();
+  const sc = document.getElementById('s-country')?.value || '';
+  const scl = document.getElementById('s-class')?.value || '';
+  const ss = document.getElementById('s-status')?.value || '';
 
   let certs = DATA.certifications.filter(r => {
-    if (country && r.country !== country) return false;
-    if (statusF && getStatus(r) !== statusF) return false;
-    if (search) {
+    if (sc && r.country !== sc) return false;
+    if (scl && r.classification !== scl) return false;
+    if (ss && getStatus(r) !== ss) return false;
+    if (q) {
       const hay = [r.device_name, r.model_name, r.cert_number, r.country].join(' ').toLowerCase();
-      if (!hay.includes(search)) return false;
+      if (!hay.includes(q)) return false;
     }
     return true;
+  }).sort((a, b) => {
+    const da = calcDays(a.expiry_date), db = calcDays(b.expiry_date);
+    if (da === null && db === null) return 0;
+    if (da === null) return 1; if (db === null) return -1;
+    return da - db;
   });
 
-  if (sortKey) {
-    certs = certs.sort((a, b) => {
-      const av = (a[sortKey] || '').toLowerCase();
-      const bv = (b[sortKey] || '').toLowerCase();
-      return av < bv ? -sortDir : av > bv ? sortDir : 0;
-    });
-  }
-  return certs;
-}
-
-function renderTable() {
-  const certs = getFilteredData();
   const total = certs.length;
-  const pages = Math.ceil(total / PAGE_SIZE);
-  if (pageNum > pages) pageNum = 1;
-  const slice = certs.slice((pageNum - 1) * PAGE_SIZE, pageNum * PAGE_SIZE);
+  const pages = Math.ceil(total / PAGE_SIZE) || 1;
+  if (listPage > pages) listPage = 1;
+  const slice = certs.slice((listPage - 1) * PAGE_SIZE, listPage * PAGE_SIZE);
 
-  const tbody = document.getElementById('cert-tbody');
+  const tbody = document.getElementById('list-tbody');
   if (!tbody) return;
 
   const isAdmin = !!adminToken;
-  document.getElementById('th-actions').style.display = isAdmin ? '' : 'none';
+  document.getElementById('th-act').style.display = isAdmin ? '' : 'none';
   document.getElementById('btn-add').style.display = isAdmin ? '' : 'none';
 
   tbody.innerHTML = slice.length === 0
-    ? `<tr class="empty"><td colspan="9">검색 결과가 없습니다</td></tr>`
-    : slice.map(r => `
-      <tr>
-        <td><span class="badge ba">${r.country}</span></td>
-        <td class="td-name">${r.device_name || '—'}</td>
-        <td class="td-model">${r.model_name || '—'}</td>
-        <td class="td-cert">${r.cert_number || '—'}</td>
-        <td><span class="badge bg">${r.classification || '—'}</span></td>
-        <td class="td-cert">${r.issue_date || '—'}</td>
-        <td>${daysLeft(r.expiry_date) || '—'}</td>
-        <td>${statusBadge(r)}</td>
-        ${isAdmin ? `<td><div class="act">
+    ? '<tr class="empty"><td colspan="10">검색 결과가 없습니다</td></tr>'
+    : slice.map(r => {
+        const d = calcDays(r.expiry_date);
+        const cls = urgCls(d);
+        const dlbl = daysLabel(d);
+        const editBtns = isAdmin ? `<td><div class="act">
           <button class="btn-icon" onclick="openEdit('${r.id}')" title="수정"><i class="ti ti-pencil"></i></button>
           <button class="btn-icon del" onclick="openDelete('${r.id}')" title="삭제"><i class="ti ti-trash"></i></button>
-        </div></td>` : ''}
-      </tr>`).join('');
+        </div></td>` : '';
+        return `<tr>
+          <td><div class="td-name">${r.device_name || '—'}</div></td>
+          <td class="td-model">${r.model_name || '—'}</td>
+          <td>${r.classification ? '<span class="badge ba">'+r.classification+'</span>' : '<span style="color:var(--text-hint)">—</span>'}</td>
+          <td>${r.country || '—'}</td>
+          <td class="td-cert">${r.cert_number || '—'}</td>
+          <td style="font-size:12px">${fmtDate(r.issue_date)}</td>
+          <td style="font-size:12px">${fmtDate(r.expiry_date)}</td>
+          <td><span class="dr ${cls}">${dlbl}</span></td>
+          <td>${statusBadge(r)}</td>
+          ${editBtns}
+        </tr>`;
+      }).join('');
 
   // Pager
-  const pager = document.getElementById('pager');
+  const pager = document.getElementById('list-pager');
   if (pager) {
-    const pageButtons = [];
-    for (let p = 1; p <= Math.min(pages, 10); p++) {
-      pageButtons.push(`<button class="pager-btn ${p===pageNum?'active':''}" onclick="goPageNum(${p})">${p}</button>`);
+    if (pages <= 1) { pager.innerHTML = `<div class="pager-info">총 ${total}건</div><div></div>`; return; }
+    const btns = [];
+    for (let p = Math.max(1, listPage-2); p <= Math.min(pages, listPage+2); p++) {
+      btns.push(`<button class="pager-btn ${p===listPage?'active':''}" onclick="listPage=${p};renderTable()">${p}</button>`);
     }
     pager.innerHTML = `
-      <div class="pager-info">총 ${total}건 (${pageNum}/${pages || 1} 페이지)</div>
+      <div class="pager-info">총 ${total}건 (${listPage}/${pages} 페이지)</div>
       <div class="pager-btns">
-        <button class="pager-btn" onclick="goPageNum(${pageNum-1})" ${pageNum<=1?'disabled':''}>‹</button>
-        ${pageButtons.join('')}
-        <button class="pager-btn" onclick="goPageNum(${pageNum+1})" ${pageNum>=pages?'disabled':''}>›</button>
+        <button class="pager-btn" onclick="listPage=Math.max(1,listPage-1);renderTable()" ${listPage<=1?'disabled':''}>‹</button>
+        ${btns.join('')}
+        <button class="pager-btn" onclick="listPage=Math.min(${pages},listPage+1);renderTable()" ${listPage>=pages?'disabled':''}>›</button>
       </div>`;
   }
 }
 
-function goPageNum(p) {
-  const total = getFilteredData().length;
-  const pages = Math.ceil(total / PAGE_SIZE);
-  pageNum = Math.max(1, Math.min(p, pages));
-  renderTable();
+// ── 만료 알림 페이지 ──────────────────────────────────────
+function renderAlertPage() {
+  const range = parseInt(document.getElementById('a-range')?.value) || 90;
+  const ac = document.getElementById('a-country')?.value || '';
+  const items = DATA.certifications.filter(r => {
+    const d = calcDays(r.expiry_date);
+    return d !== null && d <= range && (!ac || r.country === ac);
+  }).sort((a, b) => calcDays(a.expiry_date) - calcDays(b.expiry_date));
+
+  const el = document.getElementById('alert-page-list');
+  if (!items.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-hint)">해당 기간 내 만료 항목 없음</div>'; return; }
+
+  const bdmap = {d:'bd',w:'bw',i:'bi',ok:'bs'};
+  el.innerHTML = items.map(r => {
+    const d = calcDays(r.expiry_date);
+    const cls = urgCls(d);
+    const dlbl = d < 0 ? Math.abs(d) + '일 초과' : d === 0 ? 'D-Day' : 'D-' + d;
+    return `<div class="tl-item">
+      <div class="tl-dot ${cls}"></div>
+      <div class="tl-b">
+        <div class="tl-name">[${r.country}] ${r.device_name || r.model_name}${r.model_name && r.device_name ? ' ('+r.model_name+')' : ''}</div>
+        <div class="tl-meta">${r.classification||''} · 허가번호: ${r.cert_number||'—'} · 만료: ${fmtDate(r.expiry_date)}</div>
+      </div>
+      <span class="badge ${bdmap[cls]||'bs'}">${dlbl}</span>
+    </div>`;
+  }).join('');
 }
 
-function sortTable(key) {
-  if (sortKey === key) sortDir = -sortDir;
-  else { sortKey = key; sortDir = 1; }
-  pageNum = 1;
-  renderTable();
+// ── 갱신 일정 페이지 ──────────────────────────────────────
+function renderTimeline() {
+  const range = parseInt(document.getElementById('t-range')?.value) || 365;
+  const tc = document.getElementById('t-country')?.value || '';
+  const items = DATA.certifications.filter(r => {
+    const d = calcDays(r.expiry_date);
+    return d !== null && d >= -30 && d <= range && (!tc || r.country === tc);
+  }).sort((a, b) => calcDays(a.expiry_date) - calcDays(b.expiry_date));
+
+  const el = document.getElementById('timeline-container');
+  if (!items.length) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-hint)">해당 기간 내 갱신 예정 없음</div>'; return; }
+
+  const bdmap = {d:'bd',w:'bw',i:'bi',ok:'bs'};
+  let html = '', lastM = '';
+  items.forEach(r => {
+    const dt = new Date(r.expiry_date);
+    const m = dt.getFullYear() + '년 ' + (dt.getMonth() + 1) + '월';
+    if (m !== lastM) { html += `<div class="month-h">${m}</div>`; lastM = m; }
+    const d = calcDays(r.expiry_date);
+    const cls = urgCls(d);
+    const dlbl = d < 0 ? '만료됨' : d === 0 ? 'D-Day' : 'D-' + d;
+    html += `<div class="tl-item">
+      <div class="tl-dot ${cls}"></div>
+      <div class="tl-b">
+        <div class="tl-name">[${r.country}] ${r.device_name || r.model_name}${r.model_name && r.device_name ? ' ('+r.model_name+')' : ''}</div>
+        <div class="tl-meta">${r.classification||''} · 허가번호: ${r.cert_number||'—'} · 만료: ${fmtDate(r.expiry_date)}</div>
+      </div>
+      <span class="badge ${bdmap[cls]||'bs'}">${dlbl}</span>
+    </div>`;
+  });
+  el.innerHTML = html;
 }
 
-// ── Country Page ─────────────────────────────────────────
+// ── 국가별 현황 ───────────────────────────────────────────
+function buildCountryTabs() {
+  const countries = [...new Set(DATA.certifications.map(r => r.country).filter(Boolean))].sort();
+  document.getElementById('country-tabs').innerHTML =
+    ['전체', ...countries].map(c => {
+      const val = c === '전체' ? '' : c;
+      const active = selCountry === val ? ' active' : '';
+      return `<div class="ctab${active}" onclick="selCountry='${val}';buildCountryTabs();renderCountryTable()">${c}</div>`;
+    }).join('');
+}
+
 function renderCountryTable() {
-  const search = (document.getElementById('search-country')?.value || '').toLowerCase();
-  let certs = DATA.certifications.filter(r => r.country === currentCountry);
-  if (search) certs = certs.filter(r =>
-    [r.device_name, r.model_name, r.cert_number].join(' ').toLowerCase().includes(search));
+  const items = DATA.certifications
+    .filter(r => !selCountry || r.country === selCountry)
+    .sort((a, b) => {
+      const da = calcDays(a.expiry_date), db = calcDays(b.expiry_date);
+      if (da === null && db === null) return 0;
+      if (da === null) return 1; if (db === null) return -1;
+      return da - db;
+    });
 
   const tbody = document.getElementById('country-tbody');
   const isAdmin = !!adminToken;
-  document.getElementById('th-actions-c').style.display = isAdmin ? '' : 'none';
-  document.getElementById('btn-add-country').style.display = isAdmin ? '' : 'none';
+  document.getElementById('th-act-c').style.display = isAdmin ? '' : 'none';
 
-  tbody.innerHTML = certs.length === 0
-    ? `<tr class="empty"><td colspan="8">데이터가 없습니다</td></tr>`
-    : certs.map(r => `
-      <tr>
-        <td class="td-name">${r.device_name || '—'}</td>
-        <td class="td-model">${r.model_name || '—'}</td>
-        <td class="td-cert">${r.cert_number || '—'}</td>
-        <td><span class="badge bg">${r.classification || '—'}</span></td>
-        <td class="td-cert">${r.issue_date || '—'}</td>
-        <td>${daysLeft(r.expiry_date) || '—'}</td>
-        <td>${statusBadge(r)}</td>
-        ${isAdmin ? `<td><div class="act">
+  tbody.innerHTML = items.length === 0
+    ? '<tr class="empty"><td colspan="9">데이터 없음</td></tr>'
+    : items.map(r => {
+        const d = calcDays(r.expiry_date);
+        const cls = urgCls(d);
+        const dlbl = daysLabel(d);
+        const editBtns = isAdmin ? `<td><div class="act">
           <button class="btn-icon" onclick="openEdit('${r.id}')" title="수정"><i class="ti ti-pencil"></i></button>
           <button class="btn-icon del" onclick="openDelete('${r.id}')" title="삭제"><i class="ti ti-trash"></i></button>
-        </div></td>` : ''}
-      </tr>`).join('');
+        </div></td>` : '';
+        return `<tr>
+          <td><div class="td-name">${r.device_name || '—'}</div></td>
+          <td class="td-model">${r.model_name || '—'}</td>
+          <td>${r.classification ? '<span class="badge ba">'+r.classification+'</span>' : '<span style="color:var(--text-hint)">—</span>'}</td>
+          <td class="td-cert">${r.cert_number || '—'}</td>
+          <td style="font-size:12px">${fmtDate(r.issue_date)}</td>
+          <td style="font-size:12px">${fmtDate(r.expiry_date)}</td>
+          <td><span class="dr ${cls}">${dlbl}</span></td>
+          <td>${statusBadge(r)}</td>
+          ${editBtns}
+        </tr>`;
+      }).join('');
 }
 
-// ── Navigation ───────────────────────────────────────────
+// ── Navigation ────────────────────────────────────────────
 function goPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   document.getElementById('page-' + name)?.classList.add('active');
   currentPage = name;
-  const titles = {dashboard:'대시보드', all:'전체 인증 목록', alerts:'만료 알림', country: currentCountry + ' 인증 현황'};
+  const titles = {dashboard:'대시보드', all:'전체 목록', alerts:'만료 알림', timeline:'갱신 일정', 'by-country':'국가별 현황'};
   document.getElementById('topbar-title').textContent = titles[name] || name;
+  // activate matching nav item
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+name+"'")) n.classList.add('active');
+  });
   if (name === 'all') renderTable();
-  if (name === 'alerts') renderAlerts();
-  if (name === 'dashboard') { renderMetrics(); renderAlerts(); }
+  if (name === 'alerts') renderAlertPage();
+  if (name === 'timeline') renderTimeline();
+  if (name === 'by-country') { buildCountryTabs(); renderCountryTable(); }
+  if (name === 'dashboard') { renderMetrics(); renderDashAlerts(); }
 }
 
-function goCountry(country) {
-  currentCountry = country;
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-country')?.classList.add('active');
-  document.getElementById(`nav-c-${encodeURIComponent(country)}`)?.classList.add('active');
-  document.getElementById('topbar-title').textContent = country + ' 인증 현황';
-  currentPage = 'country';
-  renderCountryTable();
-}
-
-// ── Admin ────────────────────────────────────────────────
+// ── Admin ─────────────────────────────────────────────────
 function showTokenModal() {
   document.getElementById('token-input').value = '';
   document.getElementById('modal-token').classList.add('show');
@@ -865,8 +847,6 @@ function showTokenModal() {
 async function doAdminLogin() {
   const token = document.getElementById('token-input').value.trim();
   if (!token) { toast('토큰을 입력하세요', 'err'); return; }
-
-  // Verify token works
   try {
     const res = await fetch(
       `https://api.github.com/repos/${CFG.owner}/${CFG.repo}/contents/data.json`,
@@ -876,13 +856,11 @@ async function doAdminLogin() {
     adminToken = token;
     sessionStorage.setItem('cert_token', token);
     closeModal('modal-token');
-    document.getElementById('btn-admin-login').style.display = 'none';
     document.getElementById('btn-admin-logout').style.display = '';
     document.getElementById('sb-role').textContent = '편집자';
     document.getElementById('sb-role').className = 'sb-foot-role role-editor';
     document.getElementById('sb-user').textContent = '편집 모드 활성화됨';
-    renderTable();
-    renderCountryTable();
+    renderAll();
     toast('편집 모드가 활성화되었습니다', 'ok');
   } catch(e) {
     toast('토큰 인증 실패: ' + e.message, 'err');
@@ -892,22 +870,19 @@ async function doAdminLogin() {
 function adminLogout() {
   adminToken = null;
   sessionStorage.removeItem('cert_token');
-  document.getElementById('btn-admin-login').style.display = '';
   document.getElementById('btn-admin-logout').style.display = 'none';
   document.getElementById('sb-role').textContent = '조회자';
   document.getElementById('sb-role').className = 'sb-foot-role role-viewer';
   document.getElementById('sb-user').textContent = '';
-  renderTable();
-  renderCountryTable();
+  renderAll();
   toast('편집 모드가 종료되었습니다', 'info');
 }
 
-// ── CRUD ─────────────────────────────────────────────────
+// ── CRUD ──────────────────────────────────────────────────
 function openAdd() {
   editingId = null;
   document.getElementById('modal-title').textContent = '인증 추가';
   clearForm();
-  if (currentCountry) document.getElementById('f-country').value = currentCountry;
   document.getElementById('modal-edit').classList.add('show');
 }
 
@@ -916,20 +891,20 @@ function openEdit(id) {
   if (!r) return;
   editingId = id;
   document.getElementById('modal-title').textContent = '인증 수정';
-  document.getElementById('f-country').value = r.country || '';
   document.getElementById('f-device').value = r.device_name || '';
   document.getElementById('f-model').value = r.model_name || '';
+  document.getElementById('f-country').value = r.country || '';
+  document.getElementById('f-classification').value = r.classification || '';
   document.getElementById('f-cert').value = r.cert_number || '';
   document.getElementById('f-issue').value = r.issue_date || '';
   document.getElementById('f-expiry').value = r.expiry_date || '';
-  document.getElementById('f-classification').value = r.classification || '';
   document.getElementById('f-status').value = r.status || '';
   document.getElementById('f-notes').value = r.notes || '';
   document.getElementById('modal-edit').classList.add('show');
 }
 
 function clearForm() {
-  ['f-country','f-device','f-model','f-cert','f-issue','f-expiry','f-classification','f-notes'].forEach(id => {
+  ['f-device','f-model','f-country','f-classification','f-cert','f-issue','f-expiry','f-notes'].forEach(id => {
     document.getElementById(id).value = '';
   });
   document.getElementById('f-status').value = '';
@@ -937,14 +912,13 @@ function clearForm() {
 
 async function saveRecord() {
   const country = document.getElementById('f-country').value.trim();
-  const device  = document.getElementById('f-device').value.trim();
-  const model   = document.getElementById('f-model').value.trim();
+  const model = document.getElementById('f-model').value.trim();
   if (!country || !model) { toast('국가와 모델명은 필수입니다', 'err'); return; }
 
   const record = {
     id: editingId || crypto.randomUUID(),
     country,
-    device_name: device,
+    device_name: document.getElementById('f-device').value.trim(),
     model_name: model,
     cert_number: document.getElementById('f-cert').value.trim(),
     issue_date: document.getElementById('f-issue').value,
@@ -964,20 +938,14 @@ async function saveRecord() {
   closeModal('modal-edit');
   toast('저장 중...', 'info');
   const ok = await saveToGitHub();
-  if (ok) {
-    toast(editingId ? '수정되었습니다' : '추가되었습니다', 'ok');
-    renderAll();
-  } else {
-    // Revert
-    if (!editingId) DATA.certifications.pop();
-  }
+  if (ok) { toast(editingId ? '수정되었습니다' : '추가되었습니다', 'ok'); renderAll(); }
+  else if (!editingId) DATA.certifications.pop();
 }
 
 function openDelete(id) {
   deletingId = id;
   const r = DATA.certifications.find(x => x.id === id);
-  document.getElementById('del-msg').textContent =
-    `"${r?.model_name || ''}" 인증을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`;
+  document.getElementById('del-msg').textContent = `"${r?.device_name || r?.model_name || ''}" 인증을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.`;
   document.getElementById('modal-del').classList.add('show');
 }
 
@@ -988,23 +956,17 @@ async function confirmDelete() {
   closeModal('modal-del');
   toast('삭제 중...', 'info');
   const ok = await saveToGitHub();
-  if (ok) {
-    toast('삭제되었습니다', 'ok');
-    renderAll();
-  } else {
-    DATA.certifications.splice(idx, 0, removed);
-  }
+  if (ok) { toast('삭제되었습니다', 'ok'); renderAll(); }
+  else DATA.certifications.splice(idx, 0, removed);
   deletingId = null;
 }
 
-// ── Export CSV ───────────────────────────────────────────
+// ── Export CSV ────────────────────────────────────────────
 function exportCSV() {
-  const certs = getFilteredData();
-  const headers = ['국가','품목','모델명','허가번호','분류','허가일','만료일','상태','비고'];
-  const rows = certs.map(r => [
-    r.country, r.device_name, r.model_name, r.cert_number,
-    r.classification, r.issue_date, r.expiry_date, r.status, r.notes
-  ].map(v => `"${(v||'').replace(/"/g,'""')}"`));
+  const certs = DATA.certifications;
+  const headers = ['국가','품목명','모델명','허가번호','유형/분류','허가일','만료일','상태','비고'];
+  const rows = certs.map(r => [r.country, r.device_name, r.model_name, r.cert_number, r.classification, r.issue_date, r.expiry_date, r.status, r.notes]
+    .map(v => `"${(v||'').replace(/"/g,'""')}"`));
   const csv = '﻿' + [headers, ...rows].map(r => r.join(',')).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
@@ -1012,15 +974,13 @@ function exportCSV() {
   a.click();
 }
 
-// ── Modal ────────────────────────────────────────────────
-function closeModal(id) {
-  document.getElementById(id)?.classList.remove('show');
-}
+// ── Modal ─────────────────────────────────────────────────
+function closeModal(id) { document.getElementById(id)?.classList.remove('show'); }
 document.querySelectorAll('.modal-backdrop').forEach(el => {
   el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
 });
 
-// ── Toast ────────────────────────────────────────────────
+// ── Toast ─────────────────────────────────────────────────
 function toast(msg, type = 'ok') {
   const wrap = document.getElementById('toast-wrap');
   const el = document.createElement('div');
@@ -1031,22 +991,39 @@ function toast(msg, type = 'ok') {
   setTimeout(() => el.remove(), 3000);
 }
 
-// ── Init ─────────────────────────────────────────────────
-// 저장소 정보 고정 (URL 접속 시 바로 대시보드 열림)
-CFG = { owner: 'suyeon-baek', repo: 'cert-dashboard' };
-loadCfg();
-document.getElementById('sb-role').textContent = '조회자';
-document.getElementById('sb-role').className = 'sb-foot-role role-viewer';
-document.getElementById('app').style.display = 'block';
-startApp();
-
-// Re-check admin token from session
-if (adminToken) {
-  document.getElementById('btn-admin-login').style.display = 'none';
-  document.getElementById('btn-admin-logout').style.display = '';
-  document.getElementById('sb-role').textContent = '편집자';
-  document.getElementById('sb-role').className = 'sb-foot-role role-editor';
+// ── Render All ────────────────────────────────────────────
+function renderAll() {
+  buildFilters();
+  renderMetrics();
+  renderDashAlerts();
+  if (currentPage === 'all') renderTable();
+  if (currentPage === 'alerts') renderAlertPage();
+  if (currentPage === 'timeline') renderTimeline();
+  if (currentPage === 'by-country') { buildCountryTabs(); renderCountryTable(); }
+  const ud = DATA.last_updated || '—';
+  document.getElementById('sb-updated').textContent = '업데이트: ' + ud;
 }
+
+// ── Init ──────────────────────────────────────────────────
+async function startApp() {
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('today-lbl').textContent = new Date().toLocaleDateString('ko-KR');
+  document.getElementById('sb-role').textContent = '조회자';
+  document.getElementById('sb-role').className = 'sb-foot-role role-viewer';
+
+  if (adminToken) {
+    document.getElementById('btn-admin-logout').style.display = '';
+    document.getElementById('sb-role').textContent = '편집자';
+    document.getElementById('sb-role').className = 'sb-foot-role role-editor';
+    document.getElementById('sb-user').textContent = '편집 모드 활성화됨';
+  }
+
+  const ok = await fetchData();
+  if (!ok) toast('데이터를 불러올 수 없습니다. 저장소를 확인하세요.', 'err');
+  renderAll();
+}
+
+startApp();
 </script>
 </body>
 </html>
